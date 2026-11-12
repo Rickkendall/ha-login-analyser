@@ -1,0 +1,169 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Login Analyser",
+        "description": "Records every failed login / unauthorised request to Home Assistant, works out where it came from and what it was trying, and can block attackers.",
+        "data": {
+          "ban_enabled": "Enable automatic banning (fail2ban)",
+          "max_attempts": "Max failed attempts",
+          "find_time_minutes": "Time window",
+          "ban_time_minutes": "Ban duration",
+          "escalate_repeat_offenders": "Escalate repeat offenders",
+          "permanent_after_bans": "Permanent ban after N bans",
+          "instant_ban_probes": "Instant-ban exploit probes",
+          "whitelist": "Whitelist",
+          "whitelist_private": "Never ban private/LAN IPs",
+          "whitelist_successful_logins": "Never ban IPs that logged in successfully",
+          "capture_passwords": "Record passwords tried",
+          "geoip_lookup": "GeoIP / ISP lookup (ip-api.com)",
+          "shodan_internetdb": "Shodan InternetDB lookup",
+          "abuseipdb_api_key": "AbuseIPDB API key (optional)",
+          "notify_service": "Push notification service (optional)",
+          "replace_builtin_notification": "Replace HA's 'Login attempt failed' notification",
+          "retention_days": "Keep history for"
+        },
+        "data_description": {
+          "ban_enabled": "Ban IPs that fail too often or send exploit probes.",
+          "max_attempts": "Ban an IP after this many failures within the time window.",
+          "find_time_minutes": "Failures are counted within this many minutes.",
+          "ban_time_minutes": "How long the first ban lasts. 0 = permanent.",
+          "escalate_repeat_offenders": "Each further ban doubles the duration.",
+          "permanent_after_bans": "0 = never make bans permanent automatically.",
+          "instant_ban_probes": "Immediately ban requests that are never legitimate for HA (WordPress, Joomla, .env, router exploits, path traversal...).",
+          "whitelist": "IPs or CIDR ranges that are never banned, comma or newline separated (e.g. your work IP, 100.64.0.0/10 for Tailscale).",
+          "whitelist_private": "Protects devices on your home network.",
+          "whitelist_successful_logins": "IPs with a successful login in the last 30 days are trusted.",
+          "capture_passwords": "Only recorded when the username does NOT exist in Home Assistant, so your own typos are never stored.",
+          "geoip_lookup": "Country, city, ISP, ASN, hosting/proxy detection. Free, no key.",
+          "shodan_internetdb": "Open ports, known CVEs and tags such as 'compromised' or 'scanner'. Free, no key.",
+          "abuseipdb_api_key": "Free key from abuseipdb.com gives an abuse confidence score and report count.",
+          "notify_service": "e.g. notify.mobile_app_your_phone. Max one message per IP per hour (bans always notify).",
+          "replace_builtin_notification": "Swap the generic notification for a detailed one.",
+          "retention_days": "Days of history to keep."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Login Analyser is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Login Analyser options",
+        "data": {
+          "ban_enabled": "Enable automatic banning (fail2ban)",
+          "max_attempts": "Max failed attempts",
+          "find_time_minutes": "Time window",
+          "ban_time_minutes": "Ban duration",
+          "escalate_repeat_offenders": "Escalate repeat offenders",
+          "permanent_after_bans": "Permanent ban after N bans",
+          "instant_ban_probes": "Instant-ban exploit probes",
+          "whitelist": "Whitelist",
+          "whitelist_private": "Never ban private/LAN IPs",
+          "whitelist_successful_logins": "Never ban IPs that logged in successfully",
+          "capture_passwords": "Record passwords tried",
+          "geoip_lookup": "GeoIP / ISP lookup (ip-api.com)",
+          "shodan_internetdb": "Shodan InternetDB lookup",
+          "abuseipdb_api_key": "AbuseIPDB API key (optional)",
+          "notify_service": "Push notification service (optional)",
+          "replace_builtin_notification": "Replace HA's 'Login attempt failed' notification",
+          "retention_days": "Keep history for"
+        },
+        "data_description": {
+          "ban_enabled": "Ban IPs that fail too often or send exploit probes.",
+          "max_attempts": "Ban an IP after this many failures within the time window.",
+          "find_time_minutes": "Failures are counted within this many minutes.",
+          "ban_time_minutes": "How long the first ban lasts. 0 = permanent.",
+          "escalate_repeat_offenders": "Each further ban doubles the duration.",
+          "permanent_after_bans": "0 = never make bans permanent automatically.",
+          "instant_ban_probes": "Immediately ban requests that are never legitimate for HA (WordPress, Joomla, .env, router exploits, path traversal...).",
+          "whitelist": "IPs or CIDR ranges that are never banned, comma or newline separated (e.g. your work IP, 100.64.0.0/10 for Tailscale).",
+          "whitelist_private": "Protects devices on your home network.",
+          "whitelist_successful_logins": "IPs with a successful login in the last 30 days are trusted.",
+          "capture_passwords": "Only recorded when the username does NOT exist in Home Assistant, so your own typos are never stored.",
+          "geoip_lookup": "Country, city, ISP, ASN, hosting/proxy detection. Free, no key.",
+          "shodan_internetdb": "Open ports, known CVEs and tags such as 'compromised' or 'scanner'. Free, no key.",
+          "abuseipdb_api_key": "Free key from abuseipdb.com gives an abuse confidence score and report count.",
+          "notify_service": "e.g. notify.mobile_app_your_phone. Max one message per IP per hour (bans always notify).",
+          "replace_builtin_notification": "Swap the generic notification for a detailed one.",
+          "retention_days": "Days of history to keep."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "attempts_24h": {
+        "name": "Failed attempts (24h)"
+      },
+      "attempts_total": {
+        "name": "Failed attempts (stored)"
+      },
+      "attackers_24h": {
+        "name": "Attacking IPs (24h)"
+      },
+      "active_bans": {
+        "name": "Active bans"
+      },
+      "last_attacker": {
+        "name": "Last attacker"
+      },
+      "last_attempt": {
+        "name": "Last attempt"
+      },
+      "top_country": {
+        "name": "Top attacking country"
+      }
+    }
+  },
+  "services": {
+    "ban_ip": {
+      "name": "Ban IP",
+      "description": "Block an IP address.",
+      "fields": {
+        "ip": {
+          "name": "IP address",
+          "description": "IP to ban."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "Ban duration. Omit for the default policy, 0 for permanent."
+        },
+        "permanent": {
+          "name": "Permanent",
+          "description": "Ban forever."
+        },
+        "reason": {
+          "name": "Reason",
+          "description": "Shown in the panel."
+        }
+      }
+    },
+    "unban_ip": {
+      "name": "Unban IP",
+      "description": "Remove a ban (also removes it from ip_bans.yaml).",
+      "fields": {
+        "ip": {
+          "name": "IP address",
+          "description": "IP to unban."
+        }
+      }
+    },
+    "lookup_ip": {
+      "name": "Look up IP",
+      "description": "Run GeoIP / rDNS / Shodan / AbuseIPDB lookups for an IP and return the result.",
+      "fields": {
+        "ip": {
+          "name": "IP address",
+          "description": "IP to look up."
+        }
+      }
+    },
+    "clear_history": {
+      "name": "Clear history",
+      "description": "Delete recorded attempts (bans are kept)."
+    }
+  }
+}

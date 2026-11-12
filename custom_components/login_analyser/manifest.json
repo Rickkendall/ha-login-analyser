@@ -1,0 +1,22 @@
+{
+  "domain": "login_analyser",
+  "name": "Login Analyser",
+  "codeowners": [
+    "@Rickkendall"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http",
+    "panel_custom",
+    "persistent_notification",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/Rickkendall/ha-login-analyser",
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Rickkendall/ha-login-analyser/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "1.0.0"
+}
